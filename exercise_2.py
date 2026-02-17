@@ -45,7 +45,7 @@ class ShiftCipher:
         return encoded
 
 
-    def _mapping(self, crypt, text, map):
+    def _mapping(self, text, map, encrypt):
         # get the character from the word
         mapped = ""
         for c in text: 
@@ -57,9 +57,15 @@ class ShiftCipher:
                 mapped += c
                 continue
                 
-            #get the relative location 
+            #get the relative location e.g. 98 - 97 = 1 = B
             rel_loc = (ord(c) - base)
-            new_char = map[rel_loc]
+            if encrypt:
+                new_char = map[rel_loc]
+            else: #decrypt
+                lowercase = c.lower()
+                # print(lowercase)
+                inv_loc = map.index(lowercase) 
+                new_char = chr(base + inv_loc)
             # need to handle the big chars
             if base == 65:
                 new_char = new_char.upper()
@@ -84,7 +90,7 @@ class ShiftCipher:
                     elif instruction == "d":
                         text = self._decrypt(text, int(instructions[i+1]))
                 elif instruction in ["d", "e"] and not self._is_int(instructions[i+1]):
-                    text = self._mapping(instruction, text, instructions[i+1])
+                    text = self._mapping(text, instructions[i+1], True if instruction == "e" else False)
             
             print(text)
             text = sys.stdin.readline().rstrip("\n")
