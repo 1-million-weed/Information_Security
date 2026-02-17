@@ -1,3 +1,5 @@
+import sys
+
 class ShiftCipher:
     def __init__(self):
         instructions = self._read_input()
@@ -43,7 +45,7 @@ class ShiftCipher:
         return encoded
 
 
-    def _mapping(self, text, map):
+    def _mapping(self, crypt, text, map):
         # get the character from the word
         mapped = ""
         for c in text: 
@@ -82,10 +84,10 @@ class ShiftCipher:
                     elif instruction == "d":
                         text = self._decrypt(text, int(instructions[i+1]))
                 elif instruction in ["d", "e"] and not self._is_int(instructions[i+1]):
-                    text = self._mapping(text, instructions[i+1])
+                    text = self._mapping(instruction, text, instructions[i+1])
             
             print(text)
-            text = self._read_input()
+            text = sys.stdin.readline().rstrip("\n")
         
 
                 
