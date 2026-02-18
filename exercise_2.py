@@ -1,19 +1,18 @@
-import sys
-
 class ShiftCipher:
     def __init__(self):
-        instructions = self._read_input()
-        instructions = instructions.split(" ")
-        self.run(instructions)
-
-    def _read_input(self):
-        while True:
-            try:   
-                inp = input()
-            except EOFError:
-                break
-            inpp += inp
-        return "\n".join(inpp)
+        # Read first line - the instructions
+        instructions = input().split()
+        
+        # Read remaining lines - the text to process
+        text_lines = []
+        try:
+            while True:
+                text_lines.append(input())
+        except EOFError:
+            pass
+        
+        text = "\n".join(text_lines)
+        self.run(instructions, text)
         
 
     def _decrypt(self, text, n):
@@ -87,20 +86,17 @@ class ShiftCipher:
         except:
             return False
 
-    def run(self, instructions):
-        text = self._read_input()
-        while text != "":
-            for i, instruction in enumerate(instructions):
-                if instruction in ["d", "e"] and self._is_int(instructions[i+1]):
-                    if instruction == "e":
-                        text = self._encrypt(text, int(instructions[i+1]))
-                    elif instruction == "d":
-                        text = self._decrypt(text, int(instructions[i+1]))
-                elif instruction in ["d", "e"] and not self._is_int(instructions[i+1]):
-                    text = self._mapping(text, instructions[i+1], True if instruction == "e" else False)
-            
-            print(text)
-            text = sys.stdin.readline().rstrip("\n")
+    def run(self, instructions, text):
+        for i, instruction in enumerate(instructions):
+            if instruction in ["d", "e"] and self._is_int(instructions[i+1]):
+                if instruction == "e":
+                    text = self._encrypt(text, int(instructions[i+1]))
+                elif instruction == "d":
+                    text = self._decrypt(text, int(instructions[i+1]))
+            elif instruction in ["d", "e"] and not self._is_int(instructions[i+1]):
+                text = self._mapping(text, instructions[i+1], True if instruction == "e" else False)
+        
+        print(text)
         
 
                 

@@ -6,11 +6,11 @@ class Vigenere:
         instruct = inp[:1]
         plain = inp[2:]
         encrypt = True if instruct[0] == "e" else False
+        self.idx = 0  # Keep position counter across lines
         text = sys.stdin.readline().rstrip("\n")
         while text != "":
             print(self.vigenere(text, plain , encrypt))
             text = sys.stdin.readline().rstrip("\n")
-        print()
 
     def d_shift(self, line, d_shift):
         decoded = ""
@@ -49,13 +49,12 @@ class Vigenere:
 
     def vigenere(self, plain, key, encrypt=True):
         result = ""
-        idx = 0
         for c in plain:
             if not c.islower() and not c.isupper():
                 result += c
                 continue
             
-            key_letter = key[idx % len(key)]
+            key_letter = key[self.idx % len(key)]
             if key_letter.islower():
                 base_key = 97
             elif key_letter.isupper():
@@ -63,7 +62,7 @@ class Vigenere:
             else:
                 continue
             
-            idx += 1
+            self.idx += 1
             position = ord(key_letter) - base_key
             
             if encrypt:
@@ -77,3 +76,4 @@ class Vigenere:
 #vigenere("This, you see, is a plaintext that is used for teaching purposes.", "lemon", True)
 if __name__ == "__main__":
     Vigenere()
+    print()
