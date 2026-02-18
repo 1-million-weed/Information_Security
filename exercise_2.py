@@ -7,8 +7,15 @@ class ShiftCipher:
         self.run(instructions)
 
     def _read_input(self):
-        return input()
-    
+        while True:
+            try:   
+                inp = input()
+            except EOFError:
+                break
+            inpp += inp
+        return "\n".join(inpp)
+        
+
     def _decrypt(self, text, n):
         decoded = ""
         
