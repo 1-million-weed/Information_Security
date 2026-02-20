@@ -1,9 +1,7 @@
 class ShiftCipher:
     def __init__(self):
-        # Read first line - the instructions
         instructions = input().split()
-        
-        # Read remaining lines - the text to process
+
         text_lines = []
         try:
             while True:
@@ -16,7 +14,7 @@ class ShiftCipher:
         
 
     def _decrypt(self, text, n):
-        decoded = ""
+        decoded = []
         
         for c in text:
             if c.islower():
@@ -24,17 +22,17 @@ class ShiftCipher:
             elif c.isupper():
                 base = 65
             else:
-                decoded += c
+                decoded.append(c)
                 continue
                 
             new_char = chr((ord(c) - base - n) % 26 + base)
-            decoded += new_char 
+            decoded.append(new_char)
 
-        return decoded
+        return "".join(decoded)
 
 
-    def _encrypt(self,text, n):
-        encoded = ""
+    def _encrypt(self, text, n):
+        encoded = []
     
         for c in text:
             if c.islower():
@@ -42,25 +40,27 @@ class ShiftCipher:
             elif c.isupper():
                 base = 65
             else:
-                encoded += c
+                encoded.append(c)
                 continue
                 
             new_char = chr((ord(c) - base + n) % 26 + base)
-            encoded += new_char 
+            encoded.append(new_char)
             
-        return encoded
+        return "".join(encoded)
 
 
     def _mapping(self, text, map, encrypt):
         # get the character from the word
-        mapped = ""
+        mapped = []
+        if not encrypt:
+            inv_map = dict(zip(map, range(26)))
         for c in text: 
             if c.islower():
                 base = 97
             elif c.isupper():
                 base = 65
             else:
-                mapped += c
+                mapped.append(c)
                 continue
                 
             #get the relative location e.g. 98 - 97 = 1 = B
@@ -69,37 +69,37 @@ class ShiftCipher:
                 new_char = map[rel_loc]
             else: #decrypt
                 lowercase = c.lower()
-                # print(lowercase)
-                inv_loc = map.index(lowercase) 
+                inv_loc = inv_map[lowercase]
                 new_char = chr(base + inv_loc)
             # need to handle the big chars
             if base == 65:
                 new_char = new_char.upper()
-            mapped += new_char
+            mapped.append(new_char)
             
-        return mapped
-    
-    def _is_int(self, char):
-        try:
-            int(char)
-            return True
-        except:
-            return False
+        return "".join(mapped)
+
 
     def run(self, instructions, text):
+        shift = 0
         for i, instruction in enumerate(instructions):
-            if instruction in ["d", "e"] and self._is_int(instructions[i+1]):
-                if instruction == "e":
-                    text = self._encrypt(text, int(instructions[i+1]))
-                elif instruction == "d":
-                    text = self._decrypt(text, int(instructions[i+1]))
-            elif instruction in ["d", "e"] and not self._is_int(instructions[i+1]):
+            if instruction == "e" and (instructions[i+1]).isdigit():
+                shift += int(instructions[i+1])
+            elif instruction == "d" and (instructions[i+1]).isdigit():
+                shift -= int(instructions[i+1])
+            elif instruction in ["e", "d"] and not (instructions[i+1]).isdigit():
+                # else the next instruction is a mapping so the preivous stack needs to be applied and then the mapping
+                if shift != 0:
+                    text = self._encrypt(text, shift) if shift > 0 else self._decrypt(text, -shift)
+                    shift = 0
+                    
                 text = self._mapping(text, instructions[i+1], True if instruction == "e" else False)
+                
+            # what if there is no mapping after the last instruction? then just apply the shift
+            elif shift != 0 and i == len(instructions) - 1:
+                text = self._encrypt(text, shift) if shift > 0 else self._decrypt(text, -shift)
         
         print(text)
-        
-
-                
+    
     
 if __name__ == "__main__":
     ShiftCipher()

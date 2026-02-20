@@ -31,36 +31,35 @@ def step2(frequencies:list) -> float:
         sd += sqrt(first - second)
     return sd
 
-def key_guessser(k, frequencies:list) -> list:
+def key_guessser(k, frequencies:list):
     #ascii table-based
     e = ord('e')
-    a = ord('a')
-    E = ord('E')
-    A = ord('A')   
+    a = ord('a')   
     
     win_key = ""
     #im omitting uppercase cuz the input is only lowercase
     for f in frequencies:
         highest_fr = max(f, key=f.get)
-        if highest_fr.islower():
-            shift = (ord(highest_fr) - e)%26
-            win_key += chr(shift + a)
-        elif highest_fr.isupper():
-            shift = (ord(highest_fr) - E)%26
-            win_key += chr(shift + A)
+        shift = (ord(highest_fr) - e)%26
+        win_key += chr(shift + a)
     
     return win_key
 
 def input_handler():
     min_k = int(input())
-    max_k = int(sys.stdin.readline().rstrip("\n"))
+    max_k = int(input())
     encrypted_text = ""
-    text = sys.stdin.readline().rstrip("\n")
-    while text != "":
-        encrypted_text += text
-        text = sys.stdin.readline().rstrip("\n")
+    try:
+        while True:
+            text = input()
+            if text != "":
+                encrypted_text += text
+    except EOFError:
+        pass
         
-    return min_k, max_k, encrypted_text
+    # i hate this, but it MUST be lowercase
+    lowertext = "".join(ch.lower() for ch in encrypted_text if ch.isalpha())
+    return min_k, max_k, lowertext
 
 
 if __name__ == "__main__":
