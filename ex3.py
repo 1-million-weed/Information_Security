@@ -14,15 +14,15 @@ def fietsel(mode, left_half, right_half, key):
     # decrypt
     else:
         for i in range(len(key)-4, -1, -4):
-            old_right = right_half
-            right_half = left_half
-            left_half = xor(old_right, key[i:i+4])
+            old_left = left_half 
+            left_half = xor(right_half, key[i:i+4])
+            right_half = old_left 
         return left_half+right_half
     
     
 if __name__ == "__main__":
     mybytes = sys.stdin.buffer.read()
-    split = mybytes.split(b'\xFF')
+    split = mybytes.split(b'\xFF', 2)
     mode = split[0]
     key = split[1]
     plain = split[2]
