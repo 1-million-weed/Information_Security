@@ -29,13 +29,15 @@ class EllipticCurveDH:
         x1, y1 = P
         x2, y2 = Q
         
-        if x1 == x2:
-            if y1 == y2:
-                s = (3 * x1 * x1 + self.a) * self.modular_inverse(2 * y1, self.p) % self.p
+        if x1 == x2 or (x2 - x1) % self.p == 0:
+            if y1 == y2 or (y2 - y1) % self.p == 0:
+                if (2 * y1) % self.p == 0:
+                    return None
+                s = (3 * x1 * x1 + self.a) * self.modular_inverse((2 * y1) % self.p, self.p) % self.p
             else:
                 return None
         else:
-            s = (y2 - y1) * self.modular_inverse(x2 - x1, self.p) % self.p
+            s = ((y2 - y1) % self.p) * self.modular_inverse((x2 - x1) % self.p, self.p) % self.p
         
         x3 = (s * s - x1 - x2) % self.p
         y3 = (s * (x1 - x3) - y1) % self.p
@@ -60,14 +62,9 @@ class EllipticCurveDH:
         return result
 
     def calculate(self):
-        # Compute shared secret: m*n*G
         shared_secret = self.scalar_mult(self.m * self.n, self.G)
-        
-        if shared_secret is None:
-            print("(infinity)")
-        else:
-            x, y = shared_secret
-            print(f"({x}, {y})")
+        x, y = shared_secret
+        print(f"({x}, {y})")
 
     
 if __name__ == "__main__":
